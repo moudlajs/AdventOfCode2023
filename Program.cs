@@ -43,31 +43,36 @@ static Dictionary<int, int> GetFirstNumberAsDigit(string line)
     };
 }
 
-static KeyValuePair<int, int> GetFirstNumberAsString(Dictionary<int, string> numbers, string line)
+// TODO: aj pri Last, moze sa vrati ze ziadne stringove cilso tam nebude,
+// takze vracat to ako KVP ale ako int, string a prve je index druhe value 
+// a bude to vracat Empty.String, index ak nic nebude lebo nakoneic je sucet
+// aj tak string + string a pri tom sucte to osetrit (asi netreba ked je to prazdne..)
+// Lenze sa to skurvi pri tom GettRealFIrst kedze to pocita zase s intami
+static KeyValuePair<int, string> GetFirstNumberAsString(Dictionary<int, string> numbers, string line)
 {
-    var allStringDigits = new Dictionary<int, int>();
+    var allStringDigits = new Dictionary<int, string>();
     foreach (var number in numbers)
     {
         if (line.Contains(number.Value))
         {
             var indexOfNumber = line.IndexOf(number.Value);
-            var valueOfNumber = number.Key;
-            allStringDigits.Add(valueOfNumber, indexOfNumber);
+            var valueOfNumber = number.Key.ToString();
+            allStringDigits.Add(indexOfNumber, valueOfNumber);
         }
     }
-    return allStringDigits.First();
+    return allStringDigits.Count == 0 ? new KeyValuePair<int, string>(0, String.Empty) : allStringDigits.First();
 }
 
 static int GetRealFirstNumber(Dictionary<int, string> numbers, string line)
 {
     var numberAsDigit = GetFirstNumberAsDigit(line).Values.First();
-    var numberAsString = GetFirstNumberAsString(numbers, line).Key;
+    var numberAsString = GetFirstNumberAsString(numbers, line).Value;
     var indexNumberAsDigit = GetFirstNumberAsDigit(line).Keys.First();
     var indexNumberAsString = GetFirstNumberAsString(numbers, line).Value;
 
     return indexNumberAsDigit < indexNumberAsString ? numberAsDigit : numberAsString;
 }
-
+w
 static Dictionary<int, int> GetLastNumberAsDigit(string line)
 {
     var number = String.Join("", line.ToCharArray().Where(Char.IsDigit));
@@ -92,7 +97,7 @@ static KeyValuePair<int, int> GetLastNumberAsString(Dictionary<int, string> numb
             allStringDigits.Add(valueOfNumber, indexOfNumber);
         }
     }
-    return allStringDigits.Last();
+    return allStringDigits.LastOrDefault();
 }
 
 static int GetRealLastNumber(Dictionary<int, string> numbers, string line)
@@ -122,7 +127,7 @@ static string GetNumberIfPuzzleIsSingleDigit(string line)
         throw new Exception($"Something went wrong.\n Actual number was: {number}");
 }
 
-//static int GetFinalScore()
+//static int GetFinalScore(Dictionary<int, string> digits)
 //{
 //    var listOfPuzzles = GetListOfPuzzles();
 //    var sumsOfnumbers = new List<string>();
@@ -136,9 +141,9 @@ static string GetNumberIfPuzzleIsSingleDigit(string line)
 //        }
 //        else
 //        {
-//            var firstNmber = GetFirstNumberAsDigit(line, digits);
-//            var lastNumber = GetLastNumberAsDigit(line);
-//            var sumOfNumbers = firstNmber + lastNumber;
+//            var firstNmber = GetRealFirstNumber(digits, line);
+//            var lastNumber = GetRealLastNumber(digits, line);
+//            var sumOfNumbers = firstNmber.ToString() + lastNumber.ToString();
 //            sumsOfnumbers.Add(sumOfNumbers);
 //        }
 //    }
@@ -146,10 +151,10 @@ static string GetNumberIfPuzzleIsSingleDigit(string line)
 //}
 
 //Console.WriteLine(GetRealFirstNumber(digits, "2tqbxgrrpmxqfglsqjkqthree6nhjvbxpflhr1eighthr"));
-Console.WriteLine(GetRealLastNumber(digits, "2tqbxgrrpmxqfglsqjkqthree6nhjvbxpflhr1eighthr"));
+//Console.WriteLine(GetRealLastNumber(digits, "2tqbxgrrpmxqfglsqjkqthree6nhjvbxpflhr1eighthr"));
 //Console.WriteLine(GetFirstNumberAsDigit("adstwo1nine"));
-//Console.WriteLine(GetFirstNumberAsString(digits, "2tqbxgrrpmxqfglsqjkqthree6nhjvbxpflhr1eighthr"));
+//Console.WriteLine(GetFirstNumberAsString(digits, "8ln2"));
 //Console.WriteLine(IsPuzzleSingleDigit("four8flptk"));
 //Console.WriteLine(GetLastNumberAsString(digits, "2tqbxgrrpmxqfglsqjkqthree6nhjvbxpflhr1eighthr"));
 //Console.WriteLine(GetLastNumberAsDigit("2tqbxgrrpmxqfglsqjkqthree6nhjvbxpflhr1eightwohr"));
-//Console.WriteLine(GetFinalScore());
+//Console.WriteLine(GetFinalScore(digits));
