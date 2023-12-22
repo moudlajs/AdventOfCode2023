@@ -33,6 +33,17 @@ static List<string> GetListOfPuzzles()
     return listOfPuzzles;
 }
 
+static Dictionary<string, string> WriteResultToFile(Dictionary<string, string> results)
+{
+    var filePath = Path.Combine(Environment.CurrentDirectory, "..\\..\\..\\Day1\\PuzzleOutput.txt");
+    using StreamWriter streamWriter = new StreamWriter(filePath);
+
+    foreach(var line in results)
+        streamWriter.WriteLine($"{line.Key} = {line.Value}");
+    return results;
+}
+
+
 static Dictionary<int, int> GetFirstNumberAsDigit(string line)
 {
     var number = String.Join("", line.ToCharArray().Where(Char.IsDigit));
@@ -45,11 +56,6 @@ static Dictionary<int, int> GetFirstNumberAsDigit(string line)
     };
 }
 
-// TODO: aj pri Last, moze sa vrati ze ziadne stringove cilso tam nebude,
-// takze vracat to ako KVP ale ako int, string a prve je index druhe value 
-// a bude to vracat Empty.String, index ak nic nebude lebo nakoneic je sucet
-// aj tak string + string a pri tom sucte to osetrit (asi netreba ked je to prazdne..)
-// Lenze sa to skurvi pri tom GettRealFIrst kedze to pocita zase s intami
 static KeyValuePair<int, string> GetFirstNumberAsString(Dictionary<int, string> numbers, string line)
 {
     var allStringDigits = new Dictionary<int, string>();
@@ -131,11 +137,11 @@ static string GetNumberIfPuzzleIsSingleDigit(string line)
     else
         throw new Exception($"Something went wrong.\n Actual number was: {number}");
 }
-
 static int GetFinalScore(Dictionary<int, string> digits)
 {
     var listOfPuzzles = GetListOfPuzzles();
     var sumsOfnumbers = new List<string>();
+    var puzzleResults = new Dictionary<string, string>();
 
     foreach (var line in listOfPuzzles)
     {
@@ -148,9 +154,15 @@ static int GetFinalScore(Dictionary<int, string> digits)
         {
             var firstNmber = GetRealFirstNumber(digits, line);
             var lastNumber = GetRealLastNumber(digits, line);
-            var sumOfNumbers = firstNmber.ToString() + lastNumber.ToString();
-            sumsOfnumbers.Add(sumOfNumbers);
+
+            if (!string.IsNullOrEmpty(firstNmber) || !string.IsNullOrEmpty(lastNumber))
+            {
+                var sumOfNumbers = firstNmber.ToString() + lastNumber.ToString();
+                sumsOfnumbers.Add(sumOfNumbers);
+                puzzleResults.Add(line, sumOfNumbers);
+            }
         }
+        WriteResultToFile(puzzleResults);
     }
     return sumsOfnumbers.Select(s => int.Parse(s)).Sum();
 }
