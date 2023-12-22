@@ -1,6 +1,8 @@
 ﻿using System.Text.RegularExpressions;
 using System.Collections.Generic;
 using System.Security.Cryptography;
+using System.Threading.Tasks.Sources;
+using System.Collections;
 
 
 // Make it with class and unit tests
@@ -63,16 +65,16 @@ static KeyValuePair<int, string> GetFirstNumberAsString(Dictionary<int, string> 
     return allStringDigits.Count == 0 ? new KeyValuePair<int, string>(0, String.Empty) : allStringDigits.First();
 }
 
-static int GetRealFirstNumber(Dictionary<int, string> numbers, string line)
+static string GetRealFirstNumber(Dictionary<int, string> numbers, string line)
 {
     var numberAsDigit = GetFirstNumberAsDigit(line).Values.First();
     var numberAsString = GetFirstNumberAsString(numbers, line).Value;
     var indexNumberAsDigit = GetFirstNumberAsDigit(line).Keys.First();
-    var indexNumberAsString = GetFirstNumberAsString(numbers, line).Value;
+    var indexNumberAsString = GetFirstNumberAsString(numbers, line).Key;
 
-    return indexNumberAsDigit < indexNumberAsString ? numberAsDigit : numberAsString;
+    return indexNumberAsDigit < indexNumberAsString ? numberAsDigit.ToString() : numberAsString;
 }
-w
+
 static Dictionary<int, int> GetLastNumberAsDigit(string line)
 {
     var number = String.Join("", line.ToCharArray().Where(Char.IsDigit));
@@ -85,29 +87,32 @@ static Dictionary<int, int> GetLastNumberAsDigit(string line)
     };
 }
 
-static KeyValuePair<int, int> GetLastNumberAsString(Dictionary<int, string> numbers, string line)
+static KeyValuePair<int, string> GetLastNumberAsString(Dictionary<int, string> numbers, string line)
 {
-    var allStringDigits = new Dictionary<int, int>();
+    var allStringDigits = new Dictionary<int, string>();
     foreach (var number in numbers)
     {
         if (line.Contains(number.Value))
         {
             var indexOfNumber = line.LastIndexOf(number.Value);
-            var valueOfNumber = number.Key;
-            allStringDigits.Add(valueOfNumber, indexOfNumber);
+            var valueOfNumber = number.Key.ToString();
+            allStringDigits.Add(indexOfNumber, valueOfNumber);
         }
     }
-    return allStringDigits.LastOrDefault();
+    if (allStringDigits.Count == 0)
+        return new KeyValuePair<int, string>(0, String.Empty);
+    else
+        return allStringDigits.First(x => x.Key == allStringDigits.Keys.Max());
 }
 
-static int GetRealLastNumber(Dictionary<int, string> numbers, string line)
+static string GetRealLastNumber(Dictionary<int, string> numbers, string line)
 {
     var numberAsDigit = GetLastNumberAsDigit(line).Values.First();
-    var numberAsString = GetLastNumberAsString(numbers, line).Key;
+    var numberAsString = GetLastNumberAsString(numbers, line).Value;
     var indexNumberAsDigit = GetLastNumberAsDigit(line).Keys.First();
-    var indexNumberAsString = GetLastNumberAsString(numbers, line).Value;
+    var indexNumberAsString = GetLastNumberAsString(numbers, line).Key;
  
-    return indexNumberAsDigit > indexNumberAsString ? numberAsDigit : numberAsString;
+    return indexNumberAsDigit > indexNumberAsString ? numberAsDigit.ToString() : numberAsString;
 }
 
     static bool IsPuzzleSingleDigit(string line)
@@ -127,34 +132,34 @@ static string GetNumberIfPuzzleIsSingleDigit(string line)
         throw new Exception($"Something went wrong.\n Actual number was: {number}");
 }
 
-//static int GetFinalScore(Dictionary<int, string> digits)
-//{
-//    var listOfPuzzles = GetListOfPuzzles();
-//    var sumsOfnumbers = new List<string>();
+static int GetFinalScore(Dictionary<int, string> digits)
+{
+    var listOfPuzzles = GetListOfPuzzles();
+    var sumsOfnumbers = new List<string>();
 
-//    foreach (var line in listOfPuzzles)
-//    {
-//        if (IsPuzzleSingleDigit(line))
-//        {
-//            var singleDigitNumber = GetNumberIfPuzzleIsSingleDigit(line);
-//            sumsOfnumbers.Add(singleDigitNumber);
-//        }
-//        else
-//        {
-//            var firstNmber = GetRealFirstNumber(digits, line);
-//            var lastNumber = GetRealLastNumber(digits, line);
-//            var sumOfNumbers = firstNmber.ToString() + lastNumber.ToString();
-//            sumsOfnumbers.Add(sumOfNumbers);
-//        }
-//    }
-//    return sumsOfnumbers.Select(s => int.Parse(s)).Sum();
-//}
+    foreach (var line in listOfPuzzles)
+    {
+        if (IsPuzzleSingleDigit(line))
+        {
+            var singleDigitNumber = GetNumberIfPuzzleIsSingleDigit(line);
+            sumsOfnumbers.Add(singleDigitNumber);
+        }
+        else
+        {
+            var firstNmber = GetRealFirstNumber(digits, line);
+            var lastNumber = GetRealLastNumber(digits, line);
+            var sumOfNumbers = firstNmber.ToString() + lastNumber.ToString();
+            sumsOfnumbers.Add(sumOfNumbers);
+        }
+    }
+    return sumsOfnumbers.Select(s => int.Parse(s)).Sum();
+}
 
-//Console.WriteLine(GetRealFirstNumber(digits, "2tqbxgrrpmxqfglsqjkqthree6nhjvbxpflhr1eighthr"));
-//Console.WriteLine(GetRealLastNumber(digits, "2tqbxgrrpmxqfglsqjkqthree6nhjvbxpflhr1eighthr"));
+//Console.WriteLine(GetRealFirstNumber(digits, "4nineeightseven2"));
+//Console.WriteLine(GetRealLastNumber(digits, "8ln2"));
 //Console.WriteLine(GetFirstNumberAsDigit("adstwo1nine"));
 //Console.WriteLine(GetFirstNumberAsString(digits, "8ln2"));
 //Console.WriteLine(IsPuzzleSingleDigit("four8flptk"));
 //Console.WriteLine(GetLastNumberAsString(digits, "2tqbxgrrpmxqfglsqjkqthree6nhjvbxpflhr1eighthr"));
 //Console.WriteLine(GetLastNumberAsDigit("2tqbxgrrpmxqfglsqjkqthree6nhjvbxpflhr1eightwohr"));
-//Console.WriteLine(GetFinalScore(digits));
+Console.WriteLine(GetFinalScore(digits));
