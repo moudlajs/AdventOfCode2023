@@ -85,10 +85,11 @@ namespace AdventOfCode2023.Day01
             return allStringDigits.Count == 0 ? new KeyValuePair<int, string>(999, String.Empty) : firstEntry;
         }
 
-        public static string GetRealFirstNumber(Dictionary<int, string> numbers, string line)
+        public static KeyValuePair<int, string> GetRealFirstNumber(Dictionary<int, string> numbers, string line)
         {
-            var numberAsDigit = GetFirstNumberAsDigit(line).Values.First();
-            var numberAsString = GetFirstNumberAsString(numbers, line).Value;
+            // 2bmckl
+            var numberAsDigit = GetFirstNumberAsDigit(line).First();
+            var numberAsString = GetFirstNumberAsString(numbers, line);
             var indexNumberAsDigit = GetFirstNumberAsDigit(line).Keys.First();
             var indexNumberAsString = GetFirstNumberAsString(numbers, line).Key;
 
@@ -138,10 +139,10 @@ namespace AdventOfCode2023.Day01
             return allStringDigits.Count == 0 ? new KeyValuePair<int, string>(-1, String.Empty) : lastEntry;
         }
 
-        public static string GetRealLastNumber(Dictionary<int, string> numbers, string line)
+        public static KeyValuePair<int, string> GetRealLastNumber(Dictionary<int, string> numbers, string line)
         {
-            var numberAsDigit = GetLastNumberAsDigit(line).Values.First();
-            var numberAsString = GetLastNumberAsString(numbers, line).Value;
+            var numberAsDigit = GetLastNumberAsDigit(line).First();
+            var numberAsString = GetLastNumberAsString(numbers, line);
             var indexNumberAsDigit = GetLastNumberAsDigit(line).Keys.First();
             var indexNumberAsString = GetLastNumberAsString(numbers, line).Key;
 
@@ -170,21 +171,22 @@ namespace AdventOfCode2023.Day01
 
             foreach (var line in listOfPuzzles)
             {
-                // Vracat tu aj idnexy 
-                var firstNmber = GetRealFirstNumber(digits, line);
-                var lastNumber = GetRealLastNumber(digits, line);
+                var firstNumber = GetRealFirstNumber(digits, line).Value;
+                var firstNumberIndex = GetRealFirstNumber(digits, line).Key;
+                var lastNumber = GetRealLastNumber(digits, line).Value;
+                var lastNumberIndex = GetRealLastNumber(digits, line).Key;
 
-                // ostertit ten single digit case ale 
-                if (IsPuzzleSingleDigit(line))
+                // Duplicity and single digit case validation
+                if (IsPuzzleSingleDigit(line) || firstNumberIndex == lastNumberIndex)
                 {
                     var singleDigitNumber = GetNumberIfPuzzleIsSingleDigit(line);
-                    var sumOfNumbers = singleDigitNumber + lastNumber;
+                    var sumOfNumbers = singleDigitNumber;
                     sumsOfnumbers.Add(sumOfNumbers);
                     puzzleResults.Add(line, sumOfNumbers);
                 }
                 else
                 {
-                    var sumOfNumbers = firstNmber.ToString() + lastNumber.ToString();
+                    var sumOfNumbers = firstNumber + lastNumber;
                     sumsOfnumbers.Add(sumOfNumbers);
                     puzzleResults.Add(line, sumOfNumbers);
                 }
